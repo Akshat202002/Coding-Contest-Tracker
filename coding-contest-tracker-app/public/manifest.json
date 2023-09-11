@@ -6,7 +6,9 @@
       "48": "logo192.png",
      "128": "logo512.png"
     },
-    "permissions": [],
+    "permissions": [
+        "activeTab"
+    ],
     "manifest_version": 2,
     "version": "0.0.1",
     "browser_action": {
