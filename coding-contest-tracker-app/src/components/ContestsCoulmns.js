@@ -1,4 +1,3 @@
-// ContestColumns.js
 import React, { useEffect, useState } from 'react';
 
 function ContestColumns({ liveContests, todayContests, upcomingContests }) {
@@ -9,7 +8,11 @@ function ContestColumns({ liveContests, todayContests, upcomingContests }) {
         return startTime <= currentTime && currentTime <= endTime;
     };
 
-
+    const renderTimeBox = (time, isStart) => (
+        <div className={`rounded-md p-1 text-white ${isStart ? 'bg-green-500' : 'bg-blue-500'}`}>
+            {new Date(time).toLocaleTimeString()}
+        </div>
+    );
 
     const renderContestCard = (contest) => (
         <div
@@ -24,12 +27,14 @@ function ContestColumns({ liveContests, todayContests, upcomingContests }) {
             >
                 {contest.name}
             </a>
-            <p className="text-gray-600">
-                Start Time: {new Date(contest.start_time).toLocaleString()}
-            </p>
-            <p className="text-gray-600">
-                End Time: {new Date(contest.end_time).toLocaleString()}
-            </p>
+            <div className="flex items-center space-x-2">
+                <span className="text-gray-600 font-semibold">Start Time:</span>
+                {renderTimeBox(contest.start_time, true)}
+            </div>
+            <div className="flex items-center space-x-2">
+                <span className="text-gray-600 font-semibold">End Time:</span>
+                {renderTimeBox(contest.end_time, false)}
+            </div>
         </div>
     );
 
@@ -45,8 +50,6 @@ function ContestColumns({ liveContests, todayContests, upcomingContests }) {
 
             {/* Today */}
             <div className="bg-gray-200 p-4">
-
-
                 <h2 className="text-lg font-semibold">Today</h2>
                 {todayContests.map(renderContestCard)}
             </div>
