@@ -14,9 +14,9 @@ function Subscribe({ contests, onSubscribe }) {
     return (
         <div className="p-4">
             <h2 className="text-lg font-semibold">Subscribe to Contests</h2>
-            <div className="flex space-x-4 mt-4">
+            <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mt-4">
                 <select
-                    className="border p-2 rounded"
+                    className="w-full border p-2 rounded"
                     value={selectedContest}
                     onChange={(e) => setSelectedContest(e.target.value)}
                 >
