@@ -9,17 +9,17 @@ function Navbar({ onTabChange }) {
     };
 
     return (
-        <nav className="bg-blue-500 p-4 text-white">
-            <ul className="flex space-x-4">
+        <nav className="bg-blue-500 p-2 md:p-4 text-white">
+            <ul className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
                 <li
-                    className={`cursor-pointer hover:underline ${activeTab === 'contests' ? 'font-semibold' : ''
+                    className={`cursor-pointer hover:underline text-center md:text-left ${activeTab === 'contests' ? 'font-semibold' : ''
                         }`}
                     onClick={() => handleTabChange('contests')}
                 >
                     Contests
                 </li>
                 <li
-                    className={`cursor-pointer hover:underline ${activeTab === 'subscribe' ? 'font-semibold' : ''
+                    className={`cursor-pointer hover:underline text-center md:text-left ${activeTab === 'subscribe' ? 'font-semibold' : ''
                         }`}
                     onClick={() => handleTabChange('subscribe')}
                 >
