@@ -1,5 +1,38 @@
 import React, { useState } from 'react';
-
+const mapping = {
+    HackerEarth: {
+        logo: "https://yt3.ggpht.com/ytc/AAUvwngkLcuAWLtda6tQBsFi3tU9rnSSwsrK1Si7eYtx0A=s176-c-k-c0x00ffffff-no-rj",
+        color: "#323754",
+    },
+    AtCoder: {
+        logo: "https://avatars.githubusercontent.com/u/7151918?s=200&v=4",
+        color: "#222222",
+    },
+    CodeChef: {
+        logo: "https://i.pinimg.com/originals/c5/d9/fc/c5d9fc1e18bcf039f464c2ab6cfb3eb6.jpg",
+        color: "#D0C3AD",
+    },
+    LeetCode: {
+        logo: "https://upload.wikimedia.org/wikipedia/commons/1/19/LeetCode_logo_black.png",
+        color: "#FFA20E",
+    },
+    GeeksforGeeks: {
+        logo: "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20190710102234/download3.png",
+        color: "#34A853",
+    },
+    CodeForces: {
+        logo: "https://i.pinimg.com/736x/b4/6e/54/b46e546a3ee4d410f961e81d4a8cae0f.jpg",
+        color: "#3B5998",
+    },
+    TopCoder: {
+        logo: "https://images.ctfassets.net/b5f1djy59z3a/3MB1wM9Xuwca88AswIUwsK/dad472153bcb5f75ea1f3a193f25eee2/Topcoder_Logo_200px.png",
+        color: "#F69322",
+    },
+    HackerRank: {
+        logo: "https://upload.wikimedia.org/wikipedia/commons/4/40/HackerRank_Icon-1000px.png",
+        color: "#1BA94C",
+    },
+};
 function ContestColumns({ liveContests, todayContests, upcomingContests }) {
     const [activeView, setActiveView] = useState('today');
     const [notificationTime, setNotificationTime] = useState(10); // Default notification time is 10 minutes
@@ -23,29 +56,39 @@ function ContestColumns({ liveContests, todayContests, upcomingContests }) {
             className="bg-white rounded-lg shadow-md p-4 mb-4 transition duration-300 hover:shadow-lg w-full"
         >
             <div className="flex flex-col md:flex-row items-center justify-between">
-                <a
-                    href={contest.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline text-lg font-semibold md:text-xl md:mr-4"
-                >
-                    {contest.name}
-                </a>
-                <div className="flex flex-col md:flex-row items-center mt-2 md:mt-0">
-                    <div className="flex flex-col items-center md:items-start mt-2 md:mt-0">
-                        <span>{new Date(contest.start_time).toLocaleDateString('en-US', { weekday: 'short', year: '2-digit', month: '2-digit', day: '2-digit' })}</span>
-                    </div>
-                    <div className="flex flex-col items-center md:items-start mt-2 md:mt-0 ml-4">
-                        <span>{new Date(contest.end_time).toLocaleDateString('en-US', { weekday: 'short', year: '2-digit', month: '2-digit', day: '2-digit' })}</span>
+                <div>
+                    <a
+                        href={contest.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline text-lg font-semibold md:text-xl md:mr-4"
+                    >
+                        {contest.name}
+                    </a>
+                    <div className="flex items-center mt-2">
+                        <div className="flex flex-col items-center md:items-start">
+                            {renderTimeBox(contest.start_time, true)}
+                        </div>
+                        <div className="flex flex-col items-center md:items-start ml-4">
+                            {renderTimeBox(contest.end_time, false)}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className="flex items-center mt-2">
-                <div className="flex flex-col items-center md:items-start">
-                    {renderTimeBox(contest.start_time, true)}
-                </div>
-                <div className="flex flex-col items-center md:items-start ml-4">
-                    {renderTimeBox(contest.end_time, false)}
+                <div>
+                    {mapping[contest.site] && (
+                        <img
+                            src={mapping[contest.site].logo}
+                            alt={mapping[contest.site].name}
+                            style={{
+                                width: 70,
+                                height: 70,
+                                borderRadius: 2,
+                                alignSelf: "center",
+                                marginLeft: 1,
+                                cursor: "default",
+                            }}
+                        />
+                    )}
                 </div>
             </div>
             <div className="mt-4">
