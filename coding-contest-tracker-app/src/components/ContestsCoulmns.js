@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const mapping = {
     HackerEarth: {
         logo: "https://yt3.ggpht.com/ytc/AAUvwngkLcuAWLtda6tQBsFi3tU9rnSSwsrK1Si7eYtx0A=s176-c-k-c0x00ffffff-no-rj",
@@ -33,7 +35,7 @@ const mapping = {
         color: "#1BA94C",
     },
 };
-function ContestColumns({ liveContests, todayContests, upcomingContests }) {
+function ContestColumns({ liveContests, todayContests, upcomingContests, selectedPlatforms }) {
     const [activeView, setActiveView] = useState('today');
     const [notificationTime, setNotificationTime] = useState(10); // Default notification time is 10 minutes
 
@@ -44,91 +46,149 @@ function ContestColumns({ liveContests, todayContests, upcomingContests }) {
         return startTime <= currentTime && currentTime <= endTime;
     };
 
+    const filterContests = (contests) => {
+        return contests.filter((contest) => selectedPlatforms.includes(contest.site));
+    };
+
     const renderTimeBox = (time, isStart) => (
         <div className={`rounded-md p-1 text-white ${isStart ? 'bg-green-500' : 'bg-blue-500'}`}>
             {new Date(time).toLocaleTimeString('en-US', { hour12: false })}
         </div>
     );
 
-    const renderContestCard = (contest) => (
-        <div
-            key={contest.name}
-            className="bg-white rounded-lg shadow-md p-4 mb-4 transition duration-300 hover:shadow-lg w-full"
-        >
-            <div className="flex flex-col md:flex-row items-center justify-between">
-                <div>
-                    <a
-                        href={contest.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline text-lg font-semibold md:text-xl md:mr-4"
-                    >
-                        {contest.name}
-                    </a>
-                    <div className="flex items-center mt-2">
-                        <div className="flex flex-col items-center md:items-start">
-                            {renderTimeBox(contest.start_time, true)}
+    const renderContestCard = (contest) => {
+        const startDate = new Date(contest.start_time);
+        const endDate = new Date(contest.end_time);
+
+        // Format date and time strings
+        const dateRangeString = `${startDate.toLocaleDateString('en-US', {
+            weekday: 'short',
+        })}, ${startDate.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+        })} - ${endDate.toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+        })}`;
+
+        const timeRangeString = `${startDate.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+        })} - ${endDate.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+        })}`;
+
+        if (!selectedPlatforms.includes(contest.site)) {
+            // Skip rendering if the platform is not selected
+            return null;
+        }
+
+        return (
+            <div
+                key={contest.name}
+                className="bg-white rounded-lg shadow-md p-4 mb-4 transition duration-300 hover:shadow-lg w-full"
+            >
+                <div className="flex flex-col md:flex-row">
+                    <div className="mr-4">
+                        {mapping[contest.site] && (
+                            <img
+                                src={mapping[contest.site].logo}
+                                alt={mapping[contest.site].name}
+                                style={{
+                                    width: 70,
+                                    height: 70,
+                                    borderRadius: 2,
+                                    alignSelf: "center",
+                                    cursor: "default",
+                                }}
+                            />
+                        )}
+                    </div>
+                    <div className="flex-grow">
+                        <a
+                            href={contest.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 hover:underline text-lg font-semibold md:text-xl"
+                        >
+                            {contest.name}
+                        </a>
+                        <div className="mt-2">
+                            <span className="font-semibold">
+                                {mapping[contest.site]?.name}
+                            </span>
                         </div>
-                        <div className="flex flex-col items-center md:items-start ml-4">
-                            {renderTimeBox(contest.end_time, false)}
+                        <div className="mt-2">
+                            <span className="bg-blue-100 rounded p-1 text-sm">
+                                {dateRangeString}
+                            </span>
+                        </div>
+                        <div className="mt-2">
+                            <span className="bg-green-100 rounded p-1 text-sm">
+                                {timeRangeString}
+                            </span>
+                        </div>
+                        <div className="mt-4">
+                            <label htmlFor={`notification-${contest.name}`} className="text-gray-600 font-semibold">Notification:</label>
+                            <select
+                                id={`notification-${contest.name}`}
+                                className="ml-2 p-1 rounded border"
+                                value={notificationTime}
+                                onChange={(e) => setNotificationTime(Number(e.target.value))}
+                            >
+                                <option value={10}>10 minutes before</option>
+                                <option value={15}>15 minutes before</option>
+                                <option value={30}>30 minutes before</option>
+                                <option value={60}>1 hour before</option>
+                            </select>
+                            <button
+                                className="ml-4 bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                                onClick={() => setNotification(contest, notificationTime)}
+                            >
+                                Set Notification
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div>
-                    {mapping[contest.site] && (
-                        <img
-                            src={mapping[contest.site].logo}
-                            alt={mapping[contest.site].name}
-                            style={{
-                                width: 70,
-                                height: 70,
-                                borderRadius: 2,
-                                alignSelf: "center",
-                                marginLeft: 1,
-                                cursor: "default",
-                            }}
-                        />
-                    )}
-                </div>
             </div>
-            <div className="mt-4">
-                <label htmlFor={`notification-${contest.name}`} className="text-gray-600 font-semibold">Notification:</label>
-                <select
-                    id={`notification-${contest.name}`}
-                    className="ml-2 p-1 rounded border"
-                    value={notificationTime}
-                    onChange={(e) => setNotificationTime(Number(e.target.value))}
-                >
-                    <option value={10}>10 minutes before</option>
-                    <option value={15}>15 minutes before</option>
-                    <option value={30}>30 minutes before</option>
-                    <option value={60}>1 hour before</option>
-                </select>
-                <button
-                    className="ml-4 bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-                    onClick={() => setNotification(contest, notificationTime)}
-                >
-                    Set Notification
-                </button>
-            </div>
-        </div>
-    );
+        );
+    };
+
 
     const liveContestsList = liveContests.filter(isContestLive);
 
     const setNotification = (contest, minutesBefore) => {
         const startTime = new Date(contest.start_time).getTime();
         const notificationTime = startTime - minutesBefore * 60 * 1000; // Calculate the notification time
+        console.log("Notification time: ", notificationTime);
+        console.log("Start time: ", startTime);
         const currentTime = new Date().getTime();
-
+        console.log("Remaining time: ", notificationTime - currentTime);
+        console.log("Current time: ", currentTime);
         if (notificationTime > currentTime) {
+            toast.success('Notification alert created successfully', {
+                autoClose: 2000, // Close after 2 seconds
+            });
             setTimeout(() => {
                 new Notification(`Contest Reminder: ${contest.name}`, {
                     body: `The contest "${contest.name}" is starting soon.`,
                 });
+                console.log("Notification created.");
+                // Show a toast notification
+
+                toast.success('Notification alert created successfully', {
+                    autoClose: 2000, // Close after 2 seconds
+                });
             }, notificationTime - currentTime);
         } else {
-            alert('This contest has already started.');
+            toast.error('This contest has already started', {
+                autoClose: 2000, // Close after 2 seconds
+            });
+
         }
     };
 
@@ -158,10 +218,11 @@ function ContestColumns({ liveContests, todayContests, upcomingContests }) {
                 </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 p-2">
-                {activeView === 'today' && todayContests.map((contest) => renderContestCard(contest))}
-                {activeView === 'live' && liveContestsList.map((contest) => renderContestCard(contest))}
-                {activeView === 'upcoming' && upcomingContests.map((contest) => renderContestCard(contest))}
+                {activeView === 'today' && filterContests(todayContests).map((contest) => renderContestCard(contest))}
+                {activeView === 'live' && filterContests(liveContests).map((contest) => renderContestCard(contest))}
+                {activeView === 'upcoming' && filterContests(upcomingContests).map((contest) => renderContestCard(contest))}
             </div>
+            <ToastContainer position="top-right" autoClose={5000} />
         </div>
     );
 }
