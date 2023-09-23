@@ -7,6 +7,8 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Register from './components/Register';
 import 'react-toastify/dist/ReactToastify.css';
 import SignIn from './components/SignIn';
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from './firebase';
 const mapping = {
   HackerEarth: {
     logo: "https://yt3.ggpht.com/ytc/AAUvwngkLcuAWLtda6tQBsFi3tU9rnSSwsrK1Si7eYtx0A=s176-c-k-c0x00ffffff-no-rj",
@@ -57,7 +59,20 @@ function App() {
     setSelectedPlatforms(storedPlatforms);
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in
+        setUser(user);
+      } else {
+        // User is signed out
+        setUser(null);
+      }
+    });
 
+    // Clean up the listener when the component unmounts
+    return () => unsubscribe();
+  }, []);
 
   const updateSelectedPlatforms = (newSelectedPlatforms) => {
     setSelectedPlatforms(newSelectedPlatforms);

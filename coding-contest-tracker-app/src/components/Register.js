@@ -44,6 +44,7 @@ function Register({ setUser }) {
       .then((result) => {
         // The user has been signed in with Google
         console.log('User signed in with Google:', result.user);
+        setUser(result.user.displayName);
         navigate('/contests');
       })
       .catch((error) => {

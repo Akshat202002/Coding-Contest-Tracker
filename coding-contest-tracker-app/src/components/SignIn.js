@@ -16,6 +16,8 @@ function SignIn({ setUser }) {
             .then((userCredential) => {
                 // The user has been signed in
                 console.log('User signed in:', userCredential.user);
+                console.log('User signed in:', userCredential.user.displayName);
+                setUser(userCredential.user.displayName); // Set the user state
                 navigate('/contests'); // Redirect to /contests
             })
             .catch((error) => {
