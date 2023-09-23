@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase';
 function Navbar({ user, setUser }) {
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
@@ -11,9 +12,15 @@ function Navbar({ user, setUser }) {
     };
 
     const handleLogout = () => {
-        // Handle the "Logout" action here (e.g., clear user data and navigate to the sign-in page)
-        // You can use a routing library like React Router for navigation.
-        setUser(null);
+        // Sign out the user using Firebase's signOut function
+        signOut(auth)
+            .then(() => {
+                // Successfully signed out, update the user state
+                setUser(null);
+            })
+            .catch((error) => {
+                console.error('Error signing out:', error);
+            });
     };
 
     return (
