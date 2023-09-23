@@ -8,7 +8,9 @@ import Register from './components/Register';
 import 'react-toastify/dist/ReactToastify.css';
 import SignIn from './components/SignIn';
 import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from './firebase';
+import { auth, db } from './firebase';
+import { ref, set, get, child } from 'firebase/database';
+import { useAuthState } from 'react-firebase-hooks/auth'; // Import the auth hook from react-firebase-hooks
 const mapping = {
   HackerEarth: {
     logo: "https://yt3.ggpht.com/ytc/AAUvwngkLcuAWLtda6tQBsFi3tU9rnSSwsrK1Si7eYtx0A=s176-c-k-c0x00ffffff-no-rj",
@@ -55,8 +57,37 @@ function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const storedPlatforms = JSON.parse(localStorage.getItem('selectedPlatforms')) || [];
-    setSelectedPlatforms(storedPlatforms);
+    // Initialize Firebase Auth state change listener
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in
+        setUser(user);
+
+        // Load selected platforms from Firebase Realtime Database if the user is authenticated
+        const userRef = ref(db, `users/${user.uid}/selectedPlatforms`);
+        get(userRef)
+          .then((snapshot) => {
+            if (snapshot.exists()) {
+              setSelectedPlatforms(snapshot.val());
+            }
+          })
+          .catch((error) => {
+            console.error('Error loading selected platforms:', error);
+          });
+      } else {
+        // User is signed out
+        setUser(null);
+
+        // Load selected platforms from local storage if the user is not authenticated
+        const storedPlatforms = JSON.parse(localStorage.getItem('selectedPlatforms')) || [];
+        setSelectedPlatforms(storedPlatforms);
+      }
+    });
+
+    return () => {
+      // Unsubscribe from the Firebase Auth state change listener
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {

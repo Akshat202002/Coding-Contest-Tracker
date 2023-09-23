@@ -17,6 +17,7 @@ function Navbar({ user, setUser }) {
             .then(() => {
                 // Successfully signed out, update the user state
                 setUser(null);
+                localStorage.removeItem('selectedPlatforms');
             })
             .catch((error) => {
                 console.error('Error signing out:', error);
