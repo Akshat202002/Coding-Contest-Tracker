@@ -3,7 +3,10 @@ import Navbar from './components/Navbar';
 import ContestColumns from './components/ContestsCoulmns';
 import Subscribe from './components/Subscribe';
 import { toast, ToastContainer } from 'react-toastify';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import Register from './components/Register';
 import 'react-toastify/dist/ReactToastify.css';
+import SignIn from './components/SignIn';
 const mapping = {
   HackerEarth: {
     logo: "https://yt3.ggpht.com/ytc/AAUvwngkLcuAWLtda6tQBsFi3tU9rnSSwsrK1Si7eYtx0A=s176-c-k-c0x00ffffff-no-rj",
@@ -47,6 +50,7 @@ function App() {
   const [upcomingContests, setUpcomingContests] = useState([]);
   const [subscribedContests, setSubscribedContests] = useState([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState(Object.keys(mapping));
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const storedPlatforms = JSON.parse(localStorage.getItem('selectedPlatforms')) || [];
@@ -96,34 +100,43 @@ function App() {
       });
   }, []);
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-  };
-
   const handleSubscribe = (subscribed) => {
     setSubscribedContests(subscribed);
   };
 
-  return (
-    <div>
-      <Navbar onTabChange={handleTabChange} />
-      {activeTab === 'contests' ? (
-        <ContestColumns
-          liveContests={liveContests}
-          todayContests={todayContests}
-          upcomingContests={upcomingContests}
-          selectedPlatforms={selectedPlatforms}
-        />
-      ) : (
-        <Subscribe
-          selectedPlatforms={selectedPlatforms}
-          onUpdatePlatforms={updateSelectedPlatforms}
-          onSubscribe={handleSubscribe}
-        />
-      )}
+  // return (
+  //   <div>
+  //     <Navbar onTabChange={handleTabChange} />
+  //     {activeTab === 'contests' ? (
+  //       <ContestColumns
+  //         liveContests={liveContests}
+  //         todayContests={todayContests}
+  //         upcomingContests={upcomingContests}
+  //         selectedPlatforms={selectedPlatforms}
+  //       />
+  //     ) : (
+  //       <Subscribe
+  //         selectedPlatforms={selectedPlatforms}
+  //         onUpdatePlatforms={updateSelectedPlatforms}
+  //         onSubscribe={handleSubscribe}
+  //       />
+  //     )}
 
-      {/* <ToastContainer position="top-right" autoClose={5000} /> */}
-    </div>
+  //     {/* <ToastContainer position="top-right" autoClose={5000} /> */}
+  //   </div>
+  // );
+  return (
+    <Router>
+      <div>
+        <Navbar user={user} setUser={setUser} />
+        <Routes>
+          <Route path="/contests" element={<ContestColumns liveContests={liveContests} todayContests={todayContests} upcomingContests={upcomingContests} selectedPlatforms={selectedPlatforms} />} />
+          <Route path="/subscribe" element={<Subscribe selectedPlatforms={selectedPlatforms} onUpdatePlatforms={updateSelectedPlatforms} onSubscribe={handleSubscribe} />} />
+          <Route path="/register" element={<Register setUser={setUser} />} />
+          <Route path="/signin" element={<SignIn setUser={setUser} />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
