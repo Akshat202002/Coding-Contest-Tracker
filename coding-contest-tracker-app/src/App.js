@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import SignIn from './components/SignIn';
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth, db } from './firebase';
+import { useNavigate } from 'react-router-dom';
 import { ref, set, get, child } from 'firebase/database';
 import { useAuthState } from 'react-firebase-hooks/auth'; // Import the auth hook from react-firebase-hooks
 const mapping = {
@@ -171,11 +172,24 @@ function App() {
   //     {/* <ToastContainer position="top-right" autoClose={5000} /> */}
   //   </div>
   // );
+
+  function RedirectToContests() {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      navigate('/contests');
+    }, [navigate]);
+
+    return null;
+  }
+
+
   return (
     <Router>
       <div>
         <Navbar user={user} setUser={setUser} />
         <Routes>
+          <Route path="/" element={<RedirectToContests />} />
           <Route path="/contests" element={<ContestColumns liveContests={liveContests} todayContests={todayContests} upcomingContests={upcomingContests} selectedPlatforms={selectedPlatforms} />} />
           <Route path="/subscribe" element={<Subscribe selectedPlatforms={selectedPlatforms} onUpdatePlatforms={updateSelectedPlatforms} onSubscribe={handleSubscribe} />} />
           <Route path="/register" element={<Register setUser={setUser} />} />

@@ -178,9 +178,9 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
                 console.log("Notification created.");
                 // Show a toast notification
 
-                toast.success('Notification alert created successfully', {
-                    autoClose: 2000, // Close after 2 seconds
-                });
+                // toast.success('Notification alert created successfully', {
+                //     autoClose: 2000, // Close after 2 seconds
+                // });
             }, notificationTime - currentTime);
         } else {
             toast.error('This contest has already started', {
