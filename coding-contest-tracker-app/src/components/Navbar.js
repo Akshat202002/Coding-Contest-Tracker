@@ -53,6 +53,9 @@ function Navbar({ user, setUser }) {
                                     <li className="cursor-pointer py-2 px-4 hover:bg-gray-100">
                                         <Link to="/profile">Profile</Link>
                                     </li>
+                                    <li className="cursor-pointer py-2 px-4 hover:bg-gray-100">
+                                        <Link to="/account">Account</Link>
+                                    </li>
                                     <li className="cursor-pointer py-2 px-4 hover:bg-gray-100" onClick={handleLogout}>
                                         Logout
                                     </li>
