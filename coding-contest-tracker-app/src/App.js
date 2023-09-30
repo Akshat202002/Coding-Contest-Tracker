@@ -10,7 +10,7 @@ import SignIn from './components/SignIn';
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth, db } from './firebase';
 import { useNavigate } from 'react-router-dom';
-import { ref, set, get, child } from 'firebase/database';
+import { ref, set, get, child, onValue } from 'firebase/database';
 import { useAuthState } from 'react-firebase-hooks/auth'; // Import the auth hook from react-firebase-hooks
 import ProfileComponent from './components/Profile';
 import Account from './components/Account';
@@ -77,6 +77,16 @@ function App() {
           .catch((error) => {
             console.error('Error loading selected platforms:', error);
           });
+
+        // Load usernames from Firebase Realtime Database
+        const usersRef = ref(db, `users/${user.uid}`);
+        onValue(usersRef, (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            setGeeksforGeeksUsername(data.geeksforGeeksUsername || '');
+            setLeetCodeUsername(data.leetCodeUsername || '');
+          }
+        });
       } else {
         // User is signed out
         setUser(null);
@@ -184,7 +194,14 @@ function App() {
 
     return null;
   }
-  const [username, setUsername] = useState('keshav');
+  const [geeksforGeeksUsername, setGeeksforGeeksUsername] = useState('');
+  const [leetCodeUsername, setLeetCodeUsername] = useState('');
+
+  const handleUsernamesUpdate = (geeksforGeeksUsername, newLeetCodeUsername) => {
+    setGeeksforGeeksUsername(geeksforGeeksUsername);
+    setLeetCodeUsername(newLeetCodeUsername);
+  };
+
 
   return (
     <Router>
@@ -196,8 +213,8 @@ function App() {
           <Route path="/subscribe" element={<Subscribe selectedPlatforms={selectedPlatforms} onUpdatePlatforms={updateSelectedPlatforms} onSubscribe={handleSubscribe} />} />
           <Route path="/register" element={<Register setUser={setUser} />} />
           <Route path="/signin" element={<SignIn setUser={setUser} />} />
-          <Route path="/profile" element={<ProfileComponent username={username} />} />
-          <Route path="/account" element={<Account />} />
+          <Route path="/profile" element={<ProfileComponent user={user} leetCodeUsername={leetCodeUsername} />} />
+          <Route path="/account" element={<Account user={user} onUsernamesUpdate={handleUsernamesUpdate} />} />
         </Routes>
       </div>
     </Router>

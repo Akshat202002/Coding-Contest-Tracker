@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from 'react';
 
-const ProfileComponent = ({ username }) => {
+const ProfileComponent = ({ user, leetCodeUsername }) => {
     const [totalSolved, setTotalSolved] = useState(0);
     const [totalQuestions, setTotalQuestions] = useState(0);
 
     useEffect(() => {
-        fetch(`https://leetcode-stats-api.herokuapp.com/${username}`)
-            .then(response => response.json())
-            .then(data => {
-                setTotalSolved(data.totalSolved);
-                setTotalQuestions(data.totalQuestions);
-            })
-            .catch(error => console.log(error));
-    }, [username]);
+        if (user) {
+            fetch(`https://leetcode-stats-api.herokuapp.com/${leetCodeUsername}?t=${Date.now()}`)
+                .then(response => response.json())
+                .then(data => {
+                    setTotalSolved(data.totalSolved);
+                    setTotalQuestions(data.totalQuestions);
+                })
+                .catch(error => console.log(error));
+        } else {
+            // Reset the state when the user logs out
+            setTotalSolved(0);
+            setTotalQuestions(0);
+        }
+    }, [user, leetCodeUsername]);
 
     const progress = (totalSolved / totalQuestions) * 100;
     const circumference = 2 * Math.PI * 70;

@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { ref, onValue, set } from 'firebase/database';
 
-const Account = () => {
+const Account = ({ user, onUsernamesUpdate }) => {
     const [geeksforGeeksUsername, setGeeksforGeeksUsername] = useState('');
     const [leetCodeUsername, setLeetCodeUsername] = useState('');
     const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
         // Fetch the usernames from the Firebase Realtime Database
-        const usersRef = ref(db, 'users');
+        const usersRef = ref(db, `users/${user.uid}`);
         onValue(usersRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -25,13 +25,15 @@ const Account = () => {
     }, []);
 
     const handleSave = () => {
-        set(ref(db, 'users'), {
+        set(ref(db, `users/${user.uid}`), {
             geeksforGeeksUsername: geeksforGeeksUsername,
             leetCodeUsername: leetCodeUsername,
         });
 
         setIsEditing(false);
+        onUsernamesUpdate(geeksforGeeksUsername, leetCodeUsername);
     };
+
 
     const handleEdit = () => {
         setIsEditing(true);
