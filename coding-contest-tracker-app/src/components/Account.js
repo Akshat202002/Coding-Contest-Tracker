@@ -8,21 +8,24 @@ const Account = ({ user, onUsernamesUpdate }) => {
     const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
-        // Fetch the usernames from the Firebase Realtime Database
-        const usersRef = ref(db, `users/${user.uid}`);
-        onValue(usersRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                setGeeksforGeeksUsername(data.geeksforGeeksUsername || '');
-                setLeetCodeUsername(data.leetCodeUsername || '');
-            }
-        });
+        // Ensure user object is available before accessing its properties
+        if (user) {
+            const usersRef = ref(db, `users/${user.uid}`);
+            onValue(usersRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    setGeeksforGeeksUsername(data.geeksforGeeksUsername || '');
+                    setLeetCodeUsername(data.leetCodeUsername || '');
+                }
+            });
+        }
 
+        // Cleanup function
         return () => {
             // Unsubscribe from the Firebase Realtime Database listener
             // (Note: This is not necessary for onValue listener)
         };
-    }, []);
+    }, [user]);
 
     const handleSave = () => {
         set(ref(db, `users/${user.uid}`), {

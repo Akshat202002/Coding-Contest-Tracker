@@ -103,20 +103,6 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in
-        setUser(user);
-      } else {
-        // User is signed out
-        setUser(null);
-      }
-    });
-
-    // Clean up the listener when the component unmounts
-    return () => unsubscribe();
-  }, []);
 
   const updateSelectedPlatforms = (newSelectedPlatforms) => {
     setSelectedPlatforms(newSelectedPlatforms);
