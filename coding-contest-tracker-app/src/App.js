@@ -14,6 +14,8 @@ import { ref, set, get, child, onValue } from 'firebase/database';
 import { useAuthState } from 'react-firebase-hooks/auth'; // Import the auth hook from react-firebase-hooks
 import ProfileComponent from './components/Profile';
 import Account from './components/Account';
+import VerificationPending from './components/VerificationPending';
+
 const mapping = {
   HackerEarth: {
     logo: "https://yt3.ggpht.com/ytc/AAUvwngkLcuAWLtda6tQBsFi3tU9rnSSwsrK1Si7eYtx0A=s176-c-k-c0x00ffffff-no-rj",
@@ -64,8 +66,8 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is signed in
+        console.log("user", user);
         setUser(user);
-
         // Load selected platforms from Firebase Realtime Database if the user is authenticated
         const userRef = ref(db, `users/${user.uid}/selectedPlatforms`);
         get(userRef)
@@ -90,7 +92,6 @@ function App() {
       } else {
         // User is signed out
         setUser(null);
-
         // Load selected platforms from local storage if the user is not authenticated
         const storedPlatforms = JSON.parse(localStorage.getItem('selectedPlatforms')) || [];
         setSelectedPlatforms(storedPlatforms);
@@ -102,6 +103,7 @@ function App() {
       unsubscribe();
     };
   }, []);
+
 
 
   const updateSelectedPlatforms = (newSelectedPlatforms) => {
@@ -201,6 +203,7 @@ function App() {
           <Route path="/signin" element={<SignIn setUser={setUser} />} />
           <Route path="/profile" element={<ProfileComponent user={user} leetCodeUsername={leetCodeUsername} />} />
           <Route path="/account" element={<Account user={user} onUsernamesUpdate={handleUsernamesUpdate} />} />
+          <Route path="/verification-pending/:email" element={<VerificationPending />} />
         </Routes>
       </div>
     </Router>
