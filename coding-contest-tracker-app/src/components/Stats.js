@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const ProfileComponent = ({ user, leetCodeUsername }) => {
+const StatsComponent = ({ user, leetCodeUsername }) => {
     const [totalSolved, setTotalSolved] = useState(0);
     const [totalQuestions, setTotalQuestions] = useState(0);
 
@@ -26,7 +26,7 @@ const ProfileComponent = ({ user, leetCodeUsername }) => {
 
     return (
         <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-4">Profile</h2>
+            <h2 className="text-2xl font-bold mb-4">Stats</h2>
             <div className="bg-white p-4 rounded-lg shadow-md">
                 <h3 className="text-lg font-semibold mb-2">Total Problems Solved</h3>
                 <div className="flex items-center">
@@ -53,4 +53,4 @@ const ProfileComponent = ({ user, leetCodeUsername }) => {
     );
 };
 
-export default ProfileComponent;
+export default StatsComponent;

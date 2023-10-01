@@ -12,7 +12,7 @@ import { auth, db } from './firebase';
 import { useNavigate } from 'react-router-dom';
 import { ref, set, get, child, onValue } from 'firebase/database';
 import { useAuthState } from 'react-firebase-hooks/auth'; // Import the auth hook from react-firebase-hooks
-import ProfileComponent from './components/Profile';
+import StatsComponent from './components/Stats';
 import Account from './components/Account';
 import VerificationPending from './components/VerificationPending';
 
@@ -201,7 +201,7 @@ function App() {
           <Route path="/subscribe" element={<Subscribe selectedPlatforms={selectedPlatforms} onUpdatePlatforms={updateSelectedPlatforms} onSubscribe={handleSubscribe} />} />
           <Route path="/register" element={<Register setUser={setUser} />} />
           <Route path="/signin" element={<SignIn setUser={setUser} />} />
-          <Route path="/profile" element={<ProfileComponent user={user} leetCodeUsername={leetCodeUsername} />} />
+          <Route path="/stats" element={<StatsComponent user={user} leetCodeUsername={leetCodeUsername} />} />
           <Route path="/account" element={<Account user={user} onUsernamesUpdate={handleUsernamesUpdate} />} />
           <Route path="/verification-pending/:email" element={<VerificationPending />} />
         </Routes>

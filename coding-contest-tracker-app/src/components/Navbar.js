@@ -75,7 +75,7 @@ function Navbar({ user, setUser }) {
                             {user ? (
                                 <>
                                     <li className="cursor-pointer py-2 px-4 hover:bg-gray-100">
-                                        <Link to="/profile">Profile</Link>
+                                        <Link to="/stats">Stats</Link>
                                     </li>
                                     <li className="cursor-pointer py-2 px-4 hover:bg-gray-100">
                                         <Link to="/account">Account</Link>
