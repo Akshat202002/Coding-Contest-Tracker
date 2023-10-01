@@ -47,23 +47,25 @@ const VerificationPending = () => {
     const handleRefresh = () => {
         const auth = getAuth();
         const user = auth.currentUser;
-        if (user && user.emailVerified) {
-            navigate('/contests');
-        }
 
         if (user) {
             // Reload user data to pick up changes
             user.reload()
                 .then(() => {
-                    console.log("Verified or not", user.emailVerified);
                     setIsEmailVerified(user.emailVerified);
                     setRefreshKey((prevKey) => prevKey + 1);
+
+                    // Check if user has verified email
+                    if (user.emailVerified) {
+                        navigate('/contests');
+                    }
                 })
                 .catch((error) => {
                     console.error('Error reloading user data:', error);
                 });
         }
     };
+
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 py-2">
