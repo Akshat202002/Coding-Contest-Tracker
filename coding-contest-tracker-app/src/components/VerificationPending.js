@@ -1,41 +1,68 @@
 import React, { useState, useEffect } from 'react';
-import { onAuthStateChanged, getAuth, sendEmailVerification } from 'firebase/auth';
+import { getAuth, sendEmailVerification } from 'firebase/auth';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const VerificationPending = () => {
     const { email } = useParams(); // Access email parameter from the URL
     const [isEmailSent, setIsEmailSent] = useState(false);
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
         const auth = getAuth();
+        const user = auth.currentUser;
 
-        // Set up the auth state change listener
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            console.log("Email verification", user.emailVerified);
-            console.log('User:', user);
-            if (user && user.emailVerified) {
-                console.log('Email verified. Redirecting to contests page.');
-                // User email is verified, redirect to contests page
-                navigate('/contests', { replace: true }); // Use replace option to replace the current entry in history
-            }
-        });
-
-        // Clean up the listener when the component unmounts
-        return () => {
-            unsubscribe();
-        };
-    }, [navigate]);
+        if (user && !user.emailVerified) {
+            // If user is not email verified, send verification email
+            sendEmailVerification(user)
+                .then(() => {
+                    setIsEmailSent(true);
+                })
+                .catch((error) => {
+                    console.error('Error sending email verification:', error);
+                });
+        } else if (user && user.emailVerified) {
+            // If user is already email verified, set email verification status
+            setIsEmailVerified(true);
+        }
+    }, [refreshKey]);
 
     const resendVerificationEmail = () => {
         const auth = getAuth();
-        sendEmailVerification(auth.currentUser)
-            .then(() => {
-                setIsEmailSent(true);
-            })
-            .catch((error) => {
-                console.error('Error sending email verification:', error);
-            });
+        const user = auth.currentUser;
+
+        if (user && !user.emailVerified) {
+            // If user is not email verified, resend verification email
+            sendEmailVerification(user)
+                .then(() => {
+                    setIsEmailSent(true);
+                })
+                .catch((error) => {
+                    console.error('Error sending email verification:', error);
+                });
+        }
+    };
+
+    const handleRefresh = () => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        if (user && user.emailVerified) {
+            navigate('/contests');
+        }
+
+        if (user) {
+            // Reload user data to pick up changes
+            user.reload()
+                .then(() => {
+                    console.log("Verified or not", user.emailVerified);
+                    setIsEmailVerified(user.emailVerified);
+                    setRefreshKey((prevKey) => prevKey + 1);
+                })
+                .catch((error) => {
+                    console.error('Error reloading user data:', error);
+                });
+        }
     };
 
     return (
@@ -50,8 +77,13 @@ const VerificationPending = () => {
                     Please verify your email. If you haven't received the verification email, you can click below to resend it.
                 </p>
             )}
-            <button onClick={resendVerificationEmail} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-                Resend Verification Email
+            {!isEmailVerified && (
+                <button onClick={resendVerificationEmail} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                    Resend Verification Email
+                </button>
+            )}
+            <button onClick={handleRefresh} className="mt-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
+                Refresh Email Verification Status
             </button>
         </div>
     );
