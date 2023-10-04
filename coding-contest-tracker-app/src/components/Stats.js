@@ -49,6 +49,14 @@ const StatsComponent = ({ user, leetCodeUsername }) => {
                     </div>
                 </div>
             </div>
+            {/* Render the external URL below the progress bar */}
+            <div className="mt-4">
+                <iframe
+                    title="External Content"
+                    src="https://leetcard.jacoblin.cool/iwilltrickyou?ext=activity&theme=light"
+                    className="w-full h-96"
+                />
+            </div>
         </div>
     );
 };
