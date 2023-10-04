@@ -44,7 +44,7 @@ const mapping = {
 
 
 function ContestColumns({ liveContests, todayContests, upcomingContests, selectedPlatforms }) {
-    const [activeView, setActiveView] = useState('today');
+    const [activeView, setActiveView] = useState('live');
     const [notificationTime, setNotificationTime] = useState(10); // Default notification time is 10 minutes
     const [signedIn, setSignedIn] = useState(false);
 

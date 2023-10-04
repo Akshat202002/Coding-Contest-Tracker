@@ -10,8 +10,12 @@ import SignIn from './components/SignIn';
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth, db } from './firebase';
 import { useNavigate } from 'react-router-dom';
-import { ref, set, get, child } from 'firebase/database';
+import { ref, set, get, child, onValue } from 'firebase/database';
 import { useAuthState } from 'react-firebase-hooks/auth'; // Import the auth hook from react-firebase-hooks
+import StatsComponent from './components/Stats';
+import Account from './components/Account';
+import VerificationPending from './components/VerificationPending';
+
 const mapping = {
   HackerEarth: {
     logo: "https://yt3.ggpht.com/ytc/AAUvwngkLcuAWLtda6tQBsFi3tU9rnSSwsrK1Si7eYtx0A=s176-c-k-c0x00ffffff-no-rj",
@@ -62,8 +66,8 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is signed in
+        console.log("user", user);
         setUser(user);
-
         // Load selected platforms from Firebase Realtime Database if the user is authenticated
         const userRef = ref(db, `users/${user.uid}/selectedPlatforms`);
         get(userRef)
@@ -75,10 +79,19 @@ function App() {
           .catch((error) => {
             console.error('Error loading selected platforms:', error);
           });
+
+        // Load usernames from Firebase Realtime Database
+        const usersRef = ref(db, `users/${user.uid}`);
+        onValue(usersRef, (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            setGeeksforGeeksUsername(data.geeksforGeeksUsername || '');
+            setLeetCodeUsername(data.leetCodeUsername || '');
+          }
+        });
       } else {
         // User is signed out
         setUser(null);
-
         // Load selected platforms from local storage if the user is not authenticated
         const storedPlatforms = JSON.parse(localStorage.getItem('selectedPlatforms')) || [];
         setSelectedPlatforms(storedPlatforms);
@@ -91,20 +104,7 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in
-        setUser(user);
-      } else {
-        // User is signed out
-        setUser(null);
-      }
-    });
 
-    // Clean up the listener when the component unmounts
-    return () => unsubscribe();
-  }, []);
 
   const updateSelectedPlatforms = (newSelectedPlatforms) => {
     setSelectedPlatforms(newSelectedPlatforms);
@@ -182,6 +182,13 @@ function App() {
 
     return null;
   }
+  const [geeksforGeeksUsername, setGeeksforGeeksUsername] = useState('');
+  const [leetCodeUsername, setLeetCodeUsername] = useState('');
+
+  const handleUsernamesUpdate = (geeksforGeeksUsername, newLeetCodeUsername) => {
+    setGeeksforGeeksUsername(geeksforGeeksUsername);
+    setLeetCodeUsername(newLeetCodeUsername);
+  };
 
 
   return (
@@ -194,6 +201,9 @@ function App() {
           <Route path="/subscribe" element={<Subscribe selectedPlatforms={selectedPlatforms} onUpdatePlatforms={updateSelectedPlatforms} onSubscribe={handleSubscribe} />} />
           <Route path="/register" element={<Register setUser={setUser} />} />
           <Route path="/signin" element={<SignIn setUser={setUser} />} />
+          <Route path="/stats" element={<StatsComponent user={user} leetCodeUsername={leetCodeUsername} />} />
+          <Route path="/account" element={<Account user={user} onUsernamesUpdate={handleUsernamesUpdate} />} />
+          <Route path="/verification-pending/:email" element={<VerificationPending />} />
         </Routes>
       </div>
     </Router>
