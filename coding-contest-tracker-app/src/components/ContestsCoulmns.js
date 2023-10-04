@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { GoogleLogin } from 'react-google-login'
 import { gapi } from 'gapi-script';
+// import Popup from 'reactjs-popup/dist/index.css';
 
 const mapping = {
     HackerEarth: {
@@ -240,10 +240,20 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
                                 onClick={() => setNotification(contest, notificationTime)}
                             >
                                 Set Notification
-                            </button>{
+                            </button>
+                            {/* <Popup trigger=
+                                {<button> Click to open popup </button>}
+                                position="right center">
+                                <div>GeeksforGeeks</div>
+                                <button>Click here</button>
+                            </Popup> */}
+                            {
                                 signedIn && <button className="ml-4 bg-green-500 text-white px-2 py-1 rounded hover:bg-blue-600" onClick={addToCalendar}>
                                     Add to Calendar
                                 </button>
+                            }
+                            {
+                                !signedIn && <button className="ml-4 bg-green-500 text-white px-2 py-1 rounded hover:bg-blue-600" onClick={signIn}>Add to Calendar</button>
                             }
 
                         </div>
@@ -371,9 +381,7 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
                     accessType='offline'
                     scope='openid email profile https://www.googleapis.com/auth/calendar'
                 /> */}
-                {
-                    !signedIn && <button className="ml-4 bg-green-500 text-white px-2 py-1 rounded hover:bg-blue-600" onClick={signIn}>Sign In For Adding to Calendar</button>
-                }
+
 
 
             </div>
