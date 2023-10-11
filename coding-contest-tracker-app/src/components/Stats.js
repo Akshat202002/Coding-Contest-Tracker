@@ -53,7 +53,7 @@ const StatsComponent = ({ user, leetCodeUsername }) => {
             <div className="mt-4">
                 <iframe
                     title="External Content"
-                    src="https://leetcard.jacoblin.cool/iwilltrickyou?ext=activity&theme=light"
+                    src={`https://leetcard.jacoblin.cool/${leetCodeUsername}?ext=activity&theme=light`}
                     className="w-full h-96"
                 />
             </div>

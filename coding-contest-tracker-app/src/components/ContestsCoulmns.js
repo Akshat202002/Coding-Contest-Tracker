@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { auth } from '../firebase';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const mapping = {
@@ -160,35 +161,61 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
 
 
     const setNotification = (contest, minutesBefore) => {
+        const user = auth.currentUser;
+
+        if (!user) {
+            alert('Please sign in first.');
+            return;
+        }
+
         const startTime = new Date(contest.start_time).getTime();
-        const notificationTime = startTime - minutesBefore * 60 * 1000; // Calculate the notification time
-        console.log("Notification time: ", notificationTime);
-        console.log("Start time: ", startTime);
-        const currentTime = new Date().getTime();
-        console.log("Remaining time: ", notificationTime - currentTime);
-        console.log("Current time: ", currentTime);
-        if (notificationTime > currentTime) {
+        const notificationTime = startTime - minutesBefore * 60 * 1000;
+
+        if (notificationTime > new Date().getTime()) {
             toast.success('Notification alert created successfully', {
-                autoClose: 2000, // Close after 2 seconds
+                autoClose: 2000,
             });
+
+            const recipientEmail = user.email;
+
+            fetch('http://localhost:3001/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: recipientEmail,
+                    subject: `Contest Reminder: ${contest.name}`,
+                    message: `The contest "${contest.name}" is starting soon at ${new Date(
+                        contest.start_time
+                    ).toLocaleString()}.`,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Email sent successfully');
+                    } else {
+                        console.error('Failed to send email:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending email:', error);
+                });
+
             setTimeout(() => {
                 new Notification(`Contest Reminder: ${contest.name}`, {
                     body: `The contest "${contest.name}" is starting soon.`,
                 });
-                console.log("Notification created.");
-                // Show a toast notification
-
-                // toast.success('Notification alert created successfully', {
-                //     autoClose: 2000, // Close after 2 seconds
-                // });
-            }, notificationTime - currentTime);
+                console.log('Notification created.');
+            }, notificationTime - new Date().getTime());
         } else {
             toast.error('This contest has already started', {
-                autoClose: 2000, // Close after 2 seconds
+                autoClose: 2000,
             });
-
         }
     };
+
 
     return (
         <div>
