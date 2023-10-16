@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
+import { ref, set, get, child } from 'firebase/database';
+import { useAuthState } from 'react-firebase-hooks/auth'; // Import the auth hook from react-firebase-hooks
+import { auth, db } from '../firebase';
 const mapping = {
     HackerEarth: {
         logo: "https://yt3.ggpht.com/ytc/AAUvwngkLcuAWLtda6tQBsFi3tU9rnSSwsrK1Si7eYtx0A=s176-c-k-c0x00ffffff-no-rj",
@@ -37,13 +39,22 @@ const mapping = {
 
 
 function Subscribe({ selectedPlatforms, onUpdatePlatforms, onSubscribe }) {
+    const [user] = useAuthState(auth);
     useEffect(() => {
-        // Load selected platforms from local storage if available
-        const storedPlatforms = localStorage.getItem('selectedPlatforms');
-        if (storedPlatforms) {
-            onUpdatePlatforms(JSON.parse(storedPlatforms));
+        if (user) {
+            // Load selected platforms from Firebase Realtime Database
+            const userRef = ref(db, `users/${user.uid}/selectedPlatforms`);
+            get(child(userRef, 'selectedPlatforms'))
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        onUpdatePlatforms(snapshot.val());
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error loading selected platforms:', error);
+                });
         }
-    }, [onUpdatePlatforms]);
+    }, [onUpdatePlatforms, user]);
 
     const handleSubscription = (platform) => {
         const updatedPlatforms = selectedPlatforms.includes(platform)
@@ -51,7 +62,18 @@ function Subscribe({ selectedPlatforms, onUpdatePlatforms, onSubscribe }) {
             : [...selectedPlatforms, platform];
 
         onUpdatePlatforms(updatedPlatforms); // Call the callback prop to update selected platforms
-        localStorage.setItem('selectedPlatforms', JSON.stringify(updatedPlatforms));
+
+        if (user) {
+            // If the user is authenticated, update the subscribed platforms in Firebase Realtime Database
+            const userRef = ref(db, `users/${user.uid}`);
+            set(child(userRef, 'selectedPlatforms'), updatedPlatforms)
+                .then(() => {
+                    console.log('Selected platforms updated in Firebase');
+                })
+                .catch((error) => {
+                    console.error('Error updating selected platforms in Firebase:', error);
+                });
+        }
     };
 
     return (
