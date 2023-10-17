@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -220,7 +220,7 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
 
             const recipientEmail = user.email;
 
-            fetch('http://localhost:3001/send-email', {
+            fetch('https://coding-tracker-g1l98258a-akshat202002.vercel.app/send-email', { // Updated URL
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -289,6 +289,7 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
                 {activeView === 'live' && renderContestCards(filterContests(liveContests))}
                 {activeView === 'upcoming' && renderContestCards(filterContests(upcomingContests))}
             </div>
+
             <ToastContainer position="top-right" autoClose={5000} />
         </div>
     );
