@@ -12,13 +12,17 @@ app.get('/', (req, res) => {
     res.send('Server is running successfully.'); // You can customize this response message
 });
 
+// Use a dedicated SMTP provider like SendGrid or Mailgun
 const transporter = nodemailer.createTransport({
+    pool: true, // Use a pool of connections
+    maxConnections: 20, // Set maximum number of connections (adjust as per your system's capacity)
     service: 'gmail',
     auth: {
         user: 'vqakkms@gmail.com',
         pass: process.env.GMAIL_PASSWORD,
     },
 });
+
 app.post('/send-email', (req, res) => {
     const { email, subject, message } = req.body;
 
@@ -31,7 +35,6 @@ app.post('/send-email', (req, res) => {
 
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-            console.log(process.env.GMAIL_PASSWORD)
             console.error(error);
             res.status(500).json({ success: false, message: 'Failed to send email' });
         } else {
