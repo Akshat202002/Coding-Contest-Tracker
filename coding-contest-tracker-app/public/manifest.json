@@ -14,9 +14,7 @@
 
 
     "permissions": [ 
-  "activeTab", 
-  "storage",
-  "scripting"
+  "storage"
 ],
 "host_permissions": [
   "https://coding-contest-tracker-default-rtdb.firebaseio.com/",
