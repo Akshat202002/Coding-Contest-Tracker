@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import ContestColumns from './components/ContestsCoulmns';
 import Subscribe from './components/Subscribe';
-import { toast, ToastContainer } from 'react-toastify';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Register from './components/Register';
 import 'react-toastify/dist/ReactToastify.css';
 import SignIn from './components/SignIn';
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth, db } from './firebase';
 import { useNavigate } from 'react-router-dom';
-import { ref, set, get, child, onValue } from 'firebase/database';
-import { useAuthState } from 'react-firebase-hooks/auth'; // Import the auth hook from react-firebase-hooks
+import { ref, get, onValue } from 'firebase/database';
+// import { useAuthState } from 'react-firebase-hooks/auth'; // Import the auth hook from react-firebase-hooks
 import StatsComponent from './components/Stats';
 import Account from './components/Account';
 import VerificationPending from './components/VerificationPending';
@@ -52,7 +51,6 @@ const mapping = {
 };
 
 function App() {
-  const [activeTab, setActiveTab] = useState('contests');
   const [contests, setContests] = useState([]);
   const [liveContests, setLiveContests] = useState([]);
   const [todayContests, setTodayContests] = useState([]);
