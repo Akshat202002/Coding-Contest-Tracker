@@ -151,11 +151,11 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
                                 {timeRangeString}
                             </span>
                         </div>
-                        <div className="mt-4">
-                            <label htmlFor={`notification-${contest.name}`} className="text-gray-600 font-semibold">Notification:</label>
+                        <div className="mt-4 flex flex-wrap items-center">
+                            <label htmlFor={`notification-${contest.name}`} className="text-gray-600 font-semibold mr-2">Notification:</label>
                             <select
                                 id={`notification-${contest.name}`}
-                                className="ml-2 p-1 rounded border"
+                                className="p-1 rounded border mr-2"
                                 value={notificationTime}
                                 onChange={(e) => setNotificationTime(Number(e.target.value))}
                             >
@@ -165,7 +165,7 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
                                 <option value={60}>1 hour before</option>
                             </select>
                             <button
-                                className="ml-4 bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                                className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 mr-2"
                                 onClick={() => setNotification(contest, notificationTime)}
                             >
                                 Set Notification
