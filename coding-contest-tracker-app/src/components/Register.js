@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, GoogleAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
-import { auth } from '../firebase';
+// import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import VerificationPending from './VerificationPending';
+// import VerificationPending from './VerificationPending';
 function Register({ setUser }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
