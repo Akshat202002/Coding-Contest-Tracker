@@ -66,7 +66,7 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is signed in
-        console.log("user", user);
+        // console.log("user", user);
         setUser(user);
         // Load selected platforms from Firebase Realtime Database if the user is authenticated
         const userRef = ref(db, `users/${user.uid}/selectedPlatforms`);

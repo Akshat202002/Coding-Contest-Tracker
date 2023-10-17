@@ -51,7 +51,17 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
     const filterContests = (contests) => {
         return contests.filter((contest) => selectedPlatforms.includes(contest.site));
     };
+    const renderContestCards = (contests) => {
+        if (contests.length === 0) {
+            return <div className="text-center text-gray-600 py-4">No contests available.</div>;
+        }
 
+        return contests.map((contest, index) => (
+            <div key={contest.id || index}>
+                {renderContestCard(contest)}
+            </div>
+        ));
+    };
     // const renderTimeBox = (time, isStart) => (
     //     <div className={`rounded-md p-1 text-white ${isStart ? 'bg-green-500' : 'bg-blue-500'}`}>
     //         {new Date(time).toLocaleTimeString('en-US', { hour12: false })}
@@ -275,9 +285,9 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
                 </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 p-2">
-                {activeView === 'today' && filterContests(todayContests).map((contest) => renderContestCard(contest))}
-                {activeView === 'live' && filterContests(liveContests).map((contest) => renderContestCard(contest))}
-                {activeView === 'upcoming' && filterContests(upcomingContests).map((contest) => renderContestCard(contest))}
+                {activeView === 'today' && renderContestCards(filterContests(todayContests))}
+                {activeView === 'live' && renderContestCards(filterContests(liveContests))}
+                {activeView === 'upcoming' && renderContestCards(filterContests(upcomingContests))}
             </div>
             <ToastContainer position="top-right" autoClose={5000} />
         </div>
