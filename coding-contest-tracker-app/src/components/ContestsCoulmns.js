@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { auth } from '../firebase';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AddToCalendarButton } from 'add-to-calendar-button-react';
 const mapping = {
     HackerEarth: {
         logo: "https://yt3.ggpht.com/ytc/AAUvwngkLcuAWLtda6tQBsFi3tU9rnSSwsrK1Si7eYtx0A=s176-c-k-c0x00ffffff-no-rj",
@@ -56,7 +57,6 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
     //         {new Date(time).toLocaleTimeString('en-US', { hour12: false })}
     //     </div>
     // );
-
     const renderContestCard = (contest) => {
         const startDate = new Date(contest.start_time);
         const endDate = new Date(contest.end_time);
@@ -87,6 +87,24 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
             // Skip rendering if the platform is not selected
             return null;
         }
+
+        function convertTo24HourFormat(timeString) {
+            const [time, period] = timeString.split(' ');
+            let [hours, minutes] = time.split(':');
+
+            if (period === 'PM') {
+                hours = (parseInt(hours, 10) % 12) + 12;
+            } else {
+                hours = (hours % 12);
+            }
+
+            hours = hours.toString().padStart(2, '0');
+            minutes = minutes.toString().padStart(2, '0');
+
+            return `${hours}:${minutes}`;
+        }
+        const start24HourFormat = convertTo24HourFormat(new Date(contest.start_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
+        const end24HourFormat = convertTo24HourFormat(new Date(contest.end_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
 
         return (
             <div
@@ -152,7 +170,19 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
                             >
                                 Set Notification
                             </button>
+                            <AddToCalendarButton
+                                name={contest.name}
+                                options={['Apple', 'Google']}
+                                location="World Wide Web"
+                                startDate={new Date(contest.start_time).toISOString().split('T')[0]}
+                                enddate={new Date(contest.end_time).toISOString().split('T')[0]}
+                                startTime={start24HourFormat}
+                                endTime={end24HourFormat}
+                                buttonStyle="text"
+                            ></AddToCalendarButton>
                         </div>
+
+
                     </div>
                 </div>
             </div>
