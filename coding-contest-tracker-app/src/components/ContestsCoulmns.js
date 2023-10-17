@@ -119,6 +119,8 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
                                 alt={mapping[contest.site].name}
                                 style={{
                                     width: 70,
+                                    minWidth: 70,
+                                    minHeight: 70,
                                     height: 70,
                                     borderRadius: 2,
                                     alignSelf: "center",
