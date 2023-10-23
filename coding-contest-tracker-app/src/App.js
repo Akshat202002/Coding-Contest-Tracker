@@ -4,6 +4,7 @@ import ContestColumns from './components/ContestsCoulmns';
 import Subscribe from './components/Subscribe';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Register from './components/Register';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SignIn from './components/SignIn';
 import { onAuthStateChanged } from 'firebase/auth'
@@ -203,6 +204,7 @@ function App() {
           <Route path="/account" element={<Account user={user} onUsernamesUpdate={handleUsernamesUpdate} />} />
           <Route path="/verification-pending/:email" element={<VerificationPending />} />
         </Routes>
+        <ToastContainer position="top-right" autoClose={5000} />
       </div>
     </Router>
   );
