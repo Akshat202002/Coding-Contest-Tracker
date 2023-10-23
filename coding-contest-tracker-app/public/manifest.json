@@ -1,7 +1,10 @@
 {
+  "manifest_version": 3,
+    "version": "1.0.0",
     "short_name": "Coding Contest Tracker",
     "name": "Coding Contest Tracker",
-    "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'",
+    "content_security_policy.extension_pages": "script-src 'self'; object-src'self'",
+    "content_security_policy.sandbox": "script-src 'self' https://apis.google.com; object-src 'self'",
     "icons": {
       "16": "favicon.ico",
       "48": "logo192.png",
@@ -9,14 +12,13 @@
     },
     "description": "A browser extension to track upcoming coding contests",
     "permissions": [
-        "activeTab",
-        "storage",
-        "https://coding-contest-tracker-default-rtdb.firebaseio.com/",
-        "https://apis.google.com/"
+      "storage"
     ],
-    "manifest_version": 2,
-    "version": "0.0.1",
-    "browser_action": {
+    "host_permissions": [
+      "https://coding-contest-tracker-default-rtdb.firebaseio.com/",
+      "https://apis.google.com/"
+    ], 
+    "action": {
       "default_popup": "index.html",
       "default_title": "Coding Contest Tracker"
     }
