@@ -59,7 +59,6 @@ function App() {
   const [subscribedContests, setSubscribedContests] = useState([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState(Object.keys(mapping));
   const [user, setUser] = useState(null);
-
   useEffect(() => {
     // Initialize Firebase Auth state change listener
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -92,7 +91,7 @@ function App() {
         // User is signed out
         setUser(null);
         // Load selected platforms from local storage if the user is not authenticated
-        const storedPlatforms = JSON.parse(localStorage.getItem('selectedPlatforms')) || [];
+        const storedPlatforms = JSON.parse(localStorage.getItem('selectedPlatforms')) || Object.keys(mapping);
         setSelectedPlatforms(storedPlatforms);
       }
     });
@@ -110,10 +109,7 @@ function App() {
     localStorage.setItem('selectedPlatforms', JSON.stringify(newSelectedPlatforms));
   };
 
-  useEffect(() => {
-    const storedPlatforms = JSON.parse(localStorage.getItem('selectedPlatforms')) || [];
-    setSelectedPlatforms(storedPlatforms);
-  }, []);
+
 
   useEffect(() => {
     fetch('https://kontests.net/api/v1/all')
