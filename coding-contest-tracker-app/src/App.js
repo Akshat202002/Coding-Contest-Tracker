@@ -83,8 +83,8 @@ function App() {
         onValue(usersRef, (snapshot) => {
           const data = snapshot.val();
           if (data) {
-            setGeeksforGeeksUsername(data.geeksforGeeksUsername || 'test');
-            setLeetCodeUsername(data.leetCodeUsername || 'test');
+            setGeeksforGeeksUsername(data.geeksforGeeksUsername || '');
+            setLeetCodeUsername(data.leetCodeUsername || '');
           }
         });
       } else {
