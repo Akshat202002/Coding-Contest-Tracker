@@ -217,34 +217,6 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
             toast.success('Notification alert created successfully', {
                 autoClose: 2000,
             });
-
-            const recipientEmail = user.email;
-
-            fetch('https://coding-tracker-g1l98258a-akshat202002.vercel.app/send-email', { // Updated URL
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: recipientEmail,
-                    subject: `Contest Reminder: ${contest.name}`,
-                    message: `The contest "${contest.name}" is starting soon at ${new Date(
-                        contest.start_time
-                    ).toLocaleString()}.`,
-                }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        console.log('Email sent successfully');
-                    } else {
-                        console.error('Failed to send email:', data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error sending email:', error);
-                });
-
             setTimeout(() => {
                 new Notification(`Contest Reminder: ${contest.name}`, {
                     body: `The contest "${contest.name}" is starting soon.`,
