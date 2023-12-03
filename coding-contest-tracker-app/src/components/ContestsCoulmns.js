@@ -40,8 +40,18 @@ const mapping = {
         logo: "https://clist.by/media/sizes/64x64/img/resources/codingcontest_org.png",
         // yellow color
         color: "#FFD700",
+    },
+    lightoj: {
+        logo: "https://clist.by/media/sizes/64x64/img/resources/lightoj_com.png",
+        // blue color
+        color: "#0000FF",
+    },
+    kaggle: {
+        logo: "https://clist.by/media/sizes/64x64/img/resources/kaggle_com.png",
+        color: "#0000FF"
     }
 };
+
 
 function ContestColumns({ liveContests, todayContests, upcomingContests, selectedPlatforms }) {
     const [activeView, setActiveView] = useState('live');
@@ -51,7 +61,7 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
         return contests.filter((contest) => {
             console.log("contest", contest);
             const platformName = contest.resource.name.split('.')[0].toLowerCase(); // Extract the first word of the platform name and convert to lowercase
-            console.log("platformName", platformName);
+            // console.log("platformName", platformName);
             return selectedPlatforms.map(platform => platform.toLowerCase()).includes(platformName);
         });
     };
@@ -74,7 +84,7 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
     const renderContestCard = (contest) => {
         const startDate = new Date(contest.start);
         const endDate = new Date(contest.end);
-        console.log("hi", contest)
+        // console.log("hi", contest)
         const dateRangeString = `${startDate.toLocaleDateString('en-US', {
             weekday: 'short',
         })}, ${startDate.toLocaleDateString('en-US', {
@@ -101,12 +111,12 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
 
         // Access the mapping using the lowercase name
         const mappingValue = mapping[resourceLower];
-        console.log("resourceNameParts", resourceNameParts);
-        console.log("resourceLower", resourceLower);
-        console.log("mappingValue", mappingValue);
+        // console.log("resourceNameParts", resourceNameParts);
+        // console.log("resourceLower", resourceLower);
+        // console.log("mappingValue", mappingValue);
         if (!selectedPlatforms.some(platform => platform.toLowerCase() === resourceLower)) {
             // Skip rendering if the platform is not selected
-            console.log("yesssssssssss");
+            // console.log("yesssssssssss");
             return null;
         }
 

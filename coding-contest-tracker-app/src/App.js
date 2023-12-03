@@ -52,8 +52,18 @@ const mapping = {
     logo: "https://clist.by/media/sizes/64x64/img/resources/codingcontest_org.png",
     // yellow color
     color: "#FFD700",
+  },
+  lightoj: {
+    logo: "https://clist.by/media/sizes/64x64/img/resources/lightoj_com.png",
+    // blue color
+    color: "#0000FF",
+  },
+  kaggle: {
+    logo: "https://clist.by/media/sizes/64x64/img/resources/kaggle_com.png",
+    color: "#0000FF"
   }
 };
+
 
 function App() {
   const [contests, setContests] = useState([]);
