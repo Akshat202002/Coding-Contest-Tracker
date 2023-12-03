@@ -4,54 +4,55 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AddToCalendarButton } from 'add-to-calendar-button-react';
 const mapping = {
-    HackerEarth: {
+    hackerearth: {
         logo: "https://yt3.ggpht.com/ytc/AAUvwngkLcuAWLtda6tQBsFi3tU9rnSSwsrK1Si7eYtx0A=s176-c-k-c0x00ffffff-no-rj",
         color: "#323754",
     },
-    AtCoder: {
+    atcoder: {
         logo: "https://avatars.githubusercontent.com/u/7151918?s=200&v=4",
         color: "#222222",
     },
-    CodeChef: {
+    codechef: {
         logo: "https://i.pinimg.com/originals/c5/d9/fc/c5d9fc1e18bcf039f464c2ab6cfb3eb6.jpg",
         color: "#D0C3AD",
     },
-    LeetCode: {
+    leetcode: {
         logo: "https://upload.wikimedia.org/wikipedia/commons/1/19/LeetCode_logo_black.png",
         color: "#FFA20E",
     },
-    GeeksforGeeks: {
+    geeksforgeeks: {
         logo: "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20190710102234/download3.png",
         color: "#34A853",
     },
-    CodeForces: {
+    codeforces: {
         logo: "https://i.pinimg.com/736x/b4/6e/54/b46e546a3ee4d410f961e81d4a8cae0f.jpg",
         color: "#3B5998",
     },
-    TopCoder: {
+    topcoder: {
         logo: "https://images.ctfassets.net/b5f1djy59z3a/3MB1wM9Xuwca88AswIUwsK/dad472153bcb5f75ea1f3a193f25eee2/Topcoder_Logo_200px.png",
         color: "#F69322",
     },
-    HackerRank: {
+    hackerrank: {
         logo: "https://upload.wikimedia.org/wikipedia/commons/4/40/HackerRank_Icon-1000px.png",
         color: "#1BA94C",
     },
 };
+
 function ContestColumns({ liveContests, todayContests, upcomingContests, selectedPlatforms }) {
     const [activeView, setActiveView] = useState('live');
     const [notificationTime, setNotificationTime] = useState(10); // Default notification time is 10 minutes
 
-    // const isContestLive = (contest) => {
-    //     const currentTime = new Date().getTime();
-    //     const startTime = new Date(contest.start_time).getTime();
-    //     const endTime = new Date(contest.end_time).getTime();
-    //     return startTime <= currentTime && currentTime <= endTime;
-    // };
-
     const filterContests = (contests) => {
-        return contests.filter((contest) => selectedPlatforms.includes(contest.site));
+        return contests.filter((contest) => {
+            const platformName = contest.resource.name.split('.')[0].toLowerCase(); // Extract the first word of the platform name and convert to lowercase
+            return selectedPlatforms.map(platform => platform.toLowerCase()).includes(platformName);
+        });
     };
+
+
+
     const renderContestCards = (contests) => {
+        console.log("contests in new", contests);
         if (contests.length === 0) {
             return <div className="text-center text-gray-600 py-4">No contests available.</div>;
         }
@@ -62,16 +63,11 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
             </div>
         ));
     };
-    // const renderTimeBox = (time, isStart) => (
-    //     <div className={`rounded-md p-1 text-white ${isStart ? 'bg-green-500' : 'bg-blue-500'}`}>
-    //         {new Date(time).toLocaleTimeString('en-US', { hour12: false })}
-    //     </div>
-    // );
-    const renderContestCard = (contest) => {
-        const startDate = new Date(contest.start_time);
-        const endDate = new Date(contest.end_time);
 
-        // Format date and time strings
+    const renderContestCard = (contest) => {
+        const startDate = new Date(contest.start);
+        const endDate = new Date(contest.end);
+        console.log("hi", contest)
         const dateRangeString = `${startDate.toLocaleDateString('en-US', {
             weekday: 'short',
         })}, ${startDate.toLocaleDateString('en-US', {
@@ -93,40 +89,34 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
             minute: '2-digit',
         })}`;
 
-        if (!selectedPlatforms.includes(contest.site)) {
+        const resourceNameParts = contest.resource.name.split(".")[0];
+        const resourceLower = resourceNameParts.toLowerCase();
+
+        // Access the mapping using the lowercase name
+        const mappingValue = mapping[resourceLower];
+        console.log("resourceNameParts", resourceNameParts);
+        console.log("resourceLower", resourceLower);
+        console.log("mappingValue", mappingValue);
+        if (!selectedPlatforms.some(platform => platform.toLowerCase() === resourceLower)) {
             // Skip rendering if the platform is not selected
+            console.log("yesssssssssss");
             return null;
         }
 
-        function convertTo24HourFormat(timeString) {
-            const [time, period] = timeString.split(' ');
-            let [hours, minutes] = time.split(':');
-
-            if (period === 'PM') {
-                hours = (parseInt(hours, 10) % 12) + 12;
-            } else {
-                hours = (hours % 12);
-            }
-
-            hours = hours.toString().padStart(2, '0');
-            minutes = minutes.toString().padStart(2, '0');
-
-            return `${hours}:${minutes}`;
-        }
-        const start24HourFormat = convertTo24HourFormat(new Date(contest.start_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
-        const end24HourFormat = convertTo24HourFormat(new Date(contest.end_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
+        const start24HourFormat = startDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        const end24HourFormat = endDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
         return (
             <div
-                key={contest.name}
+                key={contest.id}
                 className="bg-white rounded-lg shadow-md p-4 mb-4 transition duration-300 hover:shadow-lg w-full"
             >
                 <div className="flex flex-col md:flex-row">
                     <div className="mr-4">
-                        {mapping[contest.site] && (
+                        {mapping[resourceLower] && (
                             <img
-                                src={mapping[contest.site].logo}
-                                alt={mapping[contest.site].name}
+                                src={mapping[resourceLower].logo}
+                                alt={mapping[resourceLower].name}
                                 style={{
                                     width: 70,
                                     minWidth: 70,
@@ -141,16 +131,16 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
                     </div>
                     <div className="flex-grow">
                         <a
-                            href={contest.url}
+                            href={contest.href}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-500 hover:underline text-lg font-semibold md:text-xl"
                         >
-                            {contest.name}
+                            {contest.event}
                         </a>
                         <div className="mt-2">
                             <span className="font-semibold">
-                                {mapping[contest.site]?.name}
+                                {mapping[resourceLower]?.name}
                             </span>
                         </div>
                         <div className="mt-2">
@@ -164,9 +154,9 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
                             </span>
                         </div>
                         <div className="mt-4 flex flex-wrap items-center">
-                            <label htmlFor={`notification-${contest.name}`} className="text-gray-600 font-semibold mr-2">Notification:</label>
+                            <label htmlFor={`notification-${contest.id}`} className="text-gray-600 font-semibold mr-2">Notification:</label>
                             <select
-                                id={`notification-${contest.name}`}
+                                id={`notification-${contest.id}`}
                                 className="p-1 rounded border mr-2"
                                 value={notificationTime}
                                 onChange={(e) => setNotificationTime(Number(e.target.value))}
@@ -183,24 +173,21 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
                                 Set Notification
                             </button>
                             <AddToCalendarButton
-                                name={contest.name}
+                                name={contest.event}
                                 options={['Apple', 'Google']}
                                 location="World Wide Web"
-                                startDate={new Date(contest.start_time).toISOString().split('T')[0]}
-                                enddate={new Date(contest.end_time).toISOString().split('T')[0]}
+                                startDate={startDate.toISOString().split('T')[0]}
+                                endDate={endDate.toISOString().split('T')[0]}
                                 startTime={start24HourFormat}
                                 endTime={end24HourFormat}
                                 buttonStyle="text"
                             ></AddToCalendarButton>
                         </div>
-
-
                     </div>
                 </div>
             </div>
         );
     };
-
 
     const setNotification = (contest, minutesBefore) => {
         const user = auth.currentUser;
@@ -210,7 +197,7 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
             return;
         }
 
-        const startTime = new Date(contest.start_time).getTime();
+        const startTime = new Date(contest.start).getTime();
         const notificationTime = startTime - minutesBefore * 60 * 1000;
 
         if (notificationTime > new Date().getTime()) {
@@ -227,9 +214,9 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
                 },
                 body: JSON.stringify({
                     email: recipientEmail,
-                    subject: `Contest Reminder: ${contest.name}`,
-                    message: `The contest "${contest.name}" is starting soon at ${new Date(
-                        contest.start_time
+                    subject: `Contest Reminder: ${contest.event}`,
+                    message: `The contest "${contest.event}" is starting soon at ${new Date(
+                        contest.start
                     ).toLocaleString()}.`,
                 }),
             })
@@ -246,8 +233,8 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
                 });
 
             setTimeout(() => {
-                new Notification(`Contest Reminder: ${contest.name}`, {
-                    body: `The contest "${contest.name}" is starting soon.`,
+                new Notification(`Contest Reminder: ${contest.event}`, {
+                    body: `The contest "${contest.event}" is starting soon.`,
                 });
                 console.log('Notification created.');
             }, notificationTime - new Date().getTime());
@@ -257,7 +244,6 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
             });
         }
     };
-
 
     return (
         <div>
@@ -289,7 +275,6 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
                 {activeView === 'live' && renderContestCards(filterContests(liveContests))}
                 {activeView === 'upcoming' && renderContestCards(filterContests(upcomingContests))}
             </div>
-
             <ToastContainer position="top-right" autoClose={5000} />
         </div>
     );
