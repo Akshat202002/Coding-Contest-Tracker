@@ -36,6 +36,11 @@ const mapping = {
         logo: "https://upload.wikimedia.org/wikipedia/commons/4/40/HackerRank_Icon-1000px.png",
         color: "#1BA94C",
     },
+    cups: {
+        logo: "https://clist.by/media/sizes/64x64/img/resources/codingcontest_org.png",
+        // yellow color
+        color: "#FFD700",
+    }
 };
 
 function ContestColumns({ liveContests, todayContests, upcomingContests, selectedPlatforms }) {
@@ -44,7 +49,9 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
 
     const filterContests = (contests) => {
         return contests.filter((contest) => {
+            console.log("contest", contest);
             const platformName = contest.resource.name.split('.')[0].toLowerCase(); // Extract the first word of the platform name and convert to lowercase
+            console.log("platformName", platformName);
             return selectedPlatforms.map(platform => platform.toLowerCase()).includes(platformName);
         });
     };
