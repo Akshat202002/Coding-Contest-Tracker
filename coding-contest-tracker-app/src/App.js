@@ -126,7 +126,7 @@ function App() {
 
   useEffect(() => {
     // Fetch contests from the new API
-    fetch('http://localhost:3001/clist-proxy')
+    fetch('https://coding-contest-tracker-f2t9dpkiw-akshat202002.vercel.app/clist-proxy')
       .then((response) => response.json())
       .then((data) => {
         console.log("data", data);

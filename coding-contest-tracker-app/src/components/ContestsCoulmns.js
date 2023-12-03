@@ -224,7 +224,7 @@ function ContestColumns({ liveContests, todayContests, upcomingContests, selecte
 
             const recipientEmail = user.email;
 
-            fetch('https://coding-tracker-g1l98258a-akshat202002.vercel.app/send-email', { // Updated URL
+            fetch('https://coding-contest-tracker-f2t9dpkiw-akshat202002.vercel.app/send-email', { // Updated URL
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
