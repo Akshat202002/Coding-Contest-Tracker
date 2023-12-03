@@ -12,6 +12,28 @@ app.get('/', (req, res) => {
     res.send('Server is running successfully.'); // You can customize this response message
 });
 
+// Route handler for clist.by API proxy
+app.use('/clist-proxy', async (req, res) => {
+    const clistUrl = `https://clist.by${req.url}`;
+
+    try {
+        const clistResponse = await fetch(clistUrl, {
+            method: req.method,
+            headers: {
+                'Content-Type': 'application/json',
+                // Add any other headers you need
+            },
+            body: JSON.stringify(req.body),
+        });
+
+        const clistData = await clistResponse.json();
+        res.json(clistData);
+    } catch (error) {
+        console.error('Error proxying clist.by API:', error);
+        res.status(500).json({ success: false, message: 'Failed to proxy clist.by API' });
+    }
+});
+
 // Use a dedicated SMTP provider like SendGrid or Mailgun
 const transporter = nodemailer.createTransport({
     pool: true, // Use a pool of connections
