@@ -12,6 +12,38 @@ app.get('/', (req, res) => {
     res.send('Server is running successfully.'); // You can customize this response message
 });
 
+app.use('/clist-proxy', async (req, res) => {
+    const clistUrl = `https://clist.by/api/v1/contest/?format=json&username=akshat202002&api_key=${process.env.CLIST_API_KEY}${req.url}`;
+    const clistMethod = req.method === 'GET' || req.method === 'HEAD' ? 'GET' : req.method;
+
+    try {
+        const clistResponse = await fetch(clistUrl, {
+            method: clistMethod,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `ApiKey akshat202002:a6baab8eb3f772ee443e2778f985f6f944ca3295`,
+                // Add any other headers you need
+            },
+            body: clistMethod !== 'GET' ? JSON.stringify(req.body) : undefined,
+        });
+
+        if (!clistResponse.ok) {
+            throw new Error(`Failed to fetch data from clist.by API. Status: ${clistResponse.status}`);
+        }
+
+        const clistData = await clistResponse.json();
+        console.log("clistData", clistData);
+
+        res.json(clistData); // Send the entire clistData
+        console.log("clistData sent");
+    } catch (error) {
+        console.error('Error proxying clist.by API:', error);
+        res.status(500).json({ success: false, message: 'Failed to proxy clist.by API', error: error.message });
+    }
+});
+
+
+
 // Use a dedicated SMTP provider like SendGrid or Mailgun
 const transporter = nodemailer.createTransport({
     pool: true, // Use a pool of connections

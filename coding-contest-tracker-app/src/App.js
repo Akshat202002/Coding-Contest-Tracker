@@ -110,40 +110,49 @@ function App() {
   };
 
   useEffect(() => {
-    const storedPlatforms = JSON.parse(localStorage.getItem('selectedPlatforms')) || [];
-    setSelectedPlatforms(storedPlatforms);
-  }, []);
-
-  useEffect(() => {
-    fetch('https://kontests.net/api/v1/all')
+    // Fetch contests from the new API
+    fetch('http://localhost:3001/clist-proxy')
       .then((response) => response.json())
       .then((data) => {
+        console.log("data", data);
         const currentDate = new Date();
         const live = [];
         const today = [];
         const upcoming = [];
-
-        data.forEach((contest) => {
-          const startTime = new Date(contest.start_time);
-          if (startTime <= currentDate) {
-            live.push(contest);
-          } else if (
-            startTime.getDate() === currentDate.getDate() &&
-            startTime.getMonth() === currentDate.getMonth() &&
-            startTime.getFullYear() === currentDate.getFullYear()
-          ) {
-            today.push(contest);
-          } else {
-            upcoming.push(contest);
-          }
-        });
+        if (Array.isArray(data.objects)) {
+          data.objects.forEach((contest) => {
+            const startTime = new Date(contest.start);
+            console.log("startTime", startTime);
+            if (startTime <= currentDate) {
+              live.push(contest);
+            } else if (
+              startTime.getDate() === currentDate.getDate() &&
+              startTime.getMonth() === currentDate.getMonth() &&
+              startTime.getFullYear() === currentDate.getFullYear()
+            ) {
+              today.push(contest);
+            } else {
+              upcoming.push(contest);
+            }
+          });
+        } else {
+          console.error('Invalid data format from clist.by API');
+        }
 
         setLiveContests(live);
         setTodayContests(today);
         setUpcomingContests(upcoming);
-        setContests(data);
+        setContests(data.objects);
+        console.log("live", live);
+        console.log("today", today);
+        console.log("upcoming", upcoming);
+        console.log("data.objects", data.objects);
+      })
+      .catch((error) => {
+        console.error('Error fetching contests:', error);
       });
   }, []);
+
 
   const handleSubscribe = (subscribed) => {
     setSubscribedContests(subscribed);
