@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
+
 function Navbar({ user, setUser }) {
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+    const userRef = useRef(null);
+    const dropdownRef = useRef(null);
 
-    const toggleProfileDropdown = () => {
+    const handleUserClick = () => {
         setShowProfileDropdown(!showProfileDropdown);
     };
 
@@ -18,11 +21,32 @@ function Navbar({ user, setUser }) {
                 // Successfully signed out, update the user state
                 setUser(null);
                 localStorage.removeItem('selectedPlatforms');
+                setShowProfileDropdown(false); // Close the dropdown after logout
             })
             .catch((error) => {
                 console.error('Error signing out:', error);
             });
     };
+
+    useEffect(() => {
+        // Close the dropdown when a click occurs outside of both the user element and the dropdown menu
+        const handleClickOutside = (event) => {
+            if (
+                userRef.current &&
+                !userRef.current.contains(event.target) &&
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target)
+            ) {
+                setShowProfileDropdown(false);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []); // This effect runs once during component mount to set up the event listener
 
     return (
         <nav className="bg-blue-500 p-2 md:p-4 text-white">
@@ -37,7 +61,7 @@ function Navbar({ user, setUser }) {
                         Subscribe
                     </Link>
                 </li>
-                <li className="relative cursor-pointer" onClick={toggleProfileDropdown}>
+                <li className="relative cursor-pointer" onClick={handleUserClick} ref={userRef}>
                     {user ? (
                         <div className="flex items-center">
                             <span>{user.displayName}</span>
@@ -47,11 +71,14 @@ function Navbar({ user, setUser }) {
                         <FontAwesomeIcon icon={faUser} />
                     )}
                     {showProfileDropdown && (
-                        <ul className="absolute top-8 right-0 bg-white text-black border border-gray-300 rounded-md shadow-lg">
+                        <ul ref={dropdownRef} className="absolute top-8 right-0 bg-white text-black border border-gray-300 rounded-md shadow-lg">
                             {user ? (
                                 <>
                                     <li className="cursor-pointer py-2 px-4 hover:bg-gray-100">
-                                        <Link to="/profile">Profile</Link>
+                                        <Link to="/stats">Stats</Link>
+                                    </li>
+                                    <li className="cursor-pointer py-2 px-4 hover:bg-gray-100">
+                                        <Link to="/account">Account</Link>
                                     </li>
                                     <li className="cursor-pointer py-2 px-4 hover:bg-gray-100" onClick={handleLogout}>
                                         Logout
